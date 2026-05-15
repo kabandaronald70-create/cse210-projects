@@ -452,3 +452,6 @@ $RECYCLE.BIN/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Ignore local JDK unpacked for Journal exercises
+week02/Journal/oracleJdk-26/

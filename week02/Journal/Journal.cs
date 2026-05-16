@@ -35,16 +35,28 @@ namespace JournalProgram
 
         public void SaveToFile(string filename)
         {
+            if (!filename.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
+            {
+                filename += ".csv";
+            }
+
             using StreamWriter writer = new StreamWriter(filename);
+            writer.WriteLine("Date,Prompt,Mood,Response");
+
             foreach (Entry entry in _entries)
             {
                 writer.WriteLine(entry.ToCsvString());
             }
-            Console.WriteLine($"Journal saved to {filename}");
+            Console.WriteLine($"Journal saved to {filename} ({_entries.Count} entries)");
         }
 
         public void LoadFromFile(string filename)
         {
+            if (!filename.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
+            {
+                filename += ".csv";
+            }
+
             if (!File.Exists(filename))
             {
                 Console.WriteLine("File not found.");
@@ -53,8 +65,15 @@ namespace JournalProgram
 
             List<Entry> newEntries = new List<Entry>();
             string[] lines = File.ReadAllLines(filename);
-            foreach (string line in lines)
+
+            for (int i = 0; i < lines.Length; i++)
             {
+                string line = lines[i];
+                if (i == 0 && line.StartsWith("Date,"))
+                {
+                    continue;
+                }
+
                 if (!string.IsNullOrWhiteSpace(line))
                 {
                     try
@@ -64,7 +83,7 @@ namespace JournalProgram
                     }
                     catch (FormatException)
                     {
-                        Console.WriteLine($"Skipping malformed line: {line}");
+                        Console.WriteLine($"Skipping malformed line {i + 1}: {line}");
                     }
                 }
             }

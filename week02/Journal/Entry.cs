@@ -1,16 +1,21 @@
+using System;
+using System.Collections.Generic;
+
 namespace JournalProgram
 {
     public class Entry
     {
         public string Date { get; set; }
         public string PromptText { get; set; }
+        public string Mood { get; set; }
         public string EntryText { get; set; }
 
         // Constructor
-        public Entry(string date, string promptText, string entryText)
+        public Entry(string date, string promptText, string mood, string entryText)
         {
             Date = date;
             PromptText = promptText;
+            Mood = mood;
             EntryText = entryText;
         }
 
@@ -19,22 +24,20 @@ namespace JournalProgram
         {
             Console.WriteLine($"Date: {Date}");
             Console.WriteLine($"Prompt: {PromptText}");
+            Console.WriteLine($"Mood: {Mood}");
             Console.WriteLine($"Response: {EntryText}");
             Console.WriteLine(new string('-', 40));
         }
 
-        // Convert to CSV string with proper escaping for commas and quotes
+        // Convert to CSV string with proper escaping for commas, quotes, and newlines
         public string ToCsvString()
         {
-            string escapedDate = EscapeForCsv(Date);
-            string escapedPrompt = EscapeForCsv(PromptText);
-            string escapedEntry = EscapeForCsv(EntryText);
-            return $"{escapedDate}|{escapedPrompt}|{escapedEntry}";
+            return $"{EscapeForCsv(Date)},{EscapeForCsv(PromptText)},{EscapeForCsv(Mood)},{EscapeForCsv(EntryText)}";
         }
 
-        private string EscapeForCsv(string field)
+        private static string EscapeForCsv(string field)
         {
-            if (field.Contains('|') || field.Contains('"'))
+            if (field.Contains("\"") || field.Contains(",") || field.Contains("\n") || field.Contains("\r"))
             {
                 field = field.Replace("\"", "\"\"");
                 return $"\"{field}\"";
@@ -46,9 +49,9 @@ namespace JournalProgram
         public static Entry FromCsvLine(string line)
         {
             string[] parts = SplitCsvLine(line);
-            if (parts.Length == 3)
+            if (parts.Length == 4)
             {
-                return new Entry(parts[0], parts[1], parts[2]);
+                return new Entry(parts[0], parts[1], parts[2], parts[3]);
             }
             throw new FormatException("Invalid CSV line format");
         }
@@ -57,29 +60,38 @@ namespace JournalProgram
         {
             var result = new List<string>();
             bool inQuotes = false;
-            int start = 0;
+            var field = new System.Text.StringBuilder();
+
             for (int i = 0; i < line.Length; i++)
             {
-                if (line[i] == '"')
-                    inQuotes = !inQuotes;
-                else if (line[i] == '|' && !inQuotes)
+                char c = line[i];
+
+                if (c == '"')
                 {
-                    result.Add(UnescapeField(line.Substring(start, i - start)));
-                    start = i + 1;
+                    if (inQuotes && i + 1 < line.Length && line[i + 1] == '"')
+                    {
+                        field.Append('"');
+                        i++;
+                    }
+                    else
+                    {
+                        inQuotes = !inQuotes;
+                    }
+                }
+                else if (c == ',' && !inQuotes)
+                {
+                    result.Add(field.ToString());
+                    field.Clear();
+                }
+                else
+                {
+                    field.Append(c);
                 }
             }
-            result.Add(UnescapeField(line.Substring(start)));
+
+            result.Add(field.ToString());
             return result.ToArray();
         }
 
-        private static string UnescapeField(string field)
-        {
-            if (field.StartsWith("\"") && field.EndsWith("\""))
-            {
-                field = field.Substring(1, field.Length - 2);
-                field = field.Replace("\"\"", "\"");
-            }
-            return field;
-        }
     }
 }

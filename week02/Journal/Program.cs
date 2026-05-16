@@ -6,6 +6,7 @@ namespace JournalProgram
     {
         static void Main(string[] args)
         {
+            // Exceeded requirements by adding Excel-compatible CSV storage and mood tracking for each journal entry.
             Journal journal = new Journal();
             PromptGenerator promptGen = new PromptGenerator();
             bool running = true;
@@ -28,8 +29,10 @@ namespace JournalProgram
                         Console.WriteLine($"\nPrompt: {prompt}");
                         Console.Write("Your response: ");
                         string response = Console.ReadLine();
+                        Console.Write("How are you feeling today? ");
+                        string mood = Console.ReadLine();
                         string date = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
-                        Entry newEntry = new Entry(date, prompt, response);
+                        Entry newEntry = new Entry(date, prompt, mood, response);
                         journal.AddEntry(newEntry);
                         Console.WriteLine("Entry added.");
                         break;

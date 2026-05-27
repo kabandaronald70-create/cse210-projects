@@ -168,6 +168,9 @@ public class Program
         order2.AddProduct(new Product("Book", "D412", 18.99m, 1));
         order2.AddProduct(new Product("Pen Set", "E550", 7.25m, 2));
 
+        //Title
+        Console.WriteLine("===== ONLINE ORDERING =====");
+
         // Display results for order 1
         Console.WriteLine("===== ORDER 1 =====");
         Console.WriteLine("Packing Label:");

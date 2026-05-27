@@ -3,57 +3,7 @@ using System.Collections.Generic;
 
 namespace YouTubeVideos
 {
-    /// <summary>
-    /// Represents a comment left on a YouTube video.
-    /// </summary>
-    public class Comment
-    {
-        public string CommenterName { get; set; }
-        public string Text { get; set; }
-
-        public Comment(string commenterName, string text)
-        {
-            CommenterName = commenterName;
-            Text = text;
-        }
-    }
-
-
-    /// Represents a YouTube video with its metadata and associated comments.
-    public class Video
-    {
-        public string Title { get; set; }
-        public string Author { get; set; }
-        public int LengthInSeconds { get; set; }
-        private List<Comment> Comments { get; set; }
-
-        public Video(string title, string author, int lengthInSeconds)
-        {
-            Title = title;
-            Author = author;
-            LengthInSeconds = lengthInSeconds;
-            Comments = new List<Comment>();
-        }
-
-        public void AddComment(Comment comment)
-        {
-            Comments.Add(comment);
-        }
-
-        public int GetNumberOfComments()
-        {
-            return Comments.Count;
-        }
-
-        public List<Comment> GetComments()
-        {
-            return Comments;
-        }
-    }
-
-    
-    /// Main program that creates videos, adds comments, and displays the information.
-       class Program
+    class Program
     {
         static void Main(string[] args)
         {
@@ -88,6 +38,9 @@ namespace YouTubeVideos
             video4.AddComment(new Comment("Laura", "Can you do a follow-up on SEO?"));
             video4.AddComment(new Comment("Mia", "Very detailed, exactly what I needed."));
             videos.Add(video4);
+
+            //Title
+            Console.WriteLine("===== YOUTUBE VIDEOS PROGRAM=====");
 
             // Display all videos and their comments
             foreach (Video video in videos)
